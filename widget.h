@@ -4,6 +4,7 @@
 #include <QtGui>
 #include <QtWidgets>
 #include <string>
+#include "aggregate_node.h"
 #include "ast.h"
 #include "token_reader.h"
 #include "text_stream.h"

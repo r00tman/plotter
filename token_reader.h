@@ -24,6 +24,8 @@ public:
     std::string get_last_token();
     e_token_type get_last_token_type();
     void next_token();
+
+    bool is_eof();
 };
 
 #endif // TOKEN_READER_H

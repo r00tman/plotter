@@ -14,9 +14,11 @@ SOURCES += main.cpp\
         widget.cpp \
     ast.cpp \
     text_stream.cpp \
-    token_reader.cpp
+    token_reader.cpp \
+    aggregate_node.cpp
 
 HEADERS  += widget.h \
     ast.h \
     text_stream.h \
-    token_reader.h
+    token_reader.h \
+    aggregate_node.h

@@ -33,6 +33,7 @@ struct variable_node : public ast_node {
         } else if (name == 'y') {
             return y;
         }
+        return 0;
     }
 };
 
@@ -116,13 +117,17 @@ static variable_node *parse_variable(token_reader &a) {
     return r;
 }
 
+static bool absbrace = false;
+
 static ast_node *parse_paren_expr(token_reader &a) {
     if (a.get_last_token()[0] == '|') {
+        absbrace = true;
         a.next_token(); // eat '|'
         unary_operator *res = new unary_operator();
         res->left = parse_expression(a);
         res->op = '|';
         a.next_token(); // eat '|'
+        absbrace = false;
         return res;
 
     } else if (a.get_last_token()[0] == '(') {
@@ -157,17 +162,32 @@ static ast_node *parse_bin_op_rhs(token_reader &a, int expr_prec, ast_node *lhs)
     while(1) {
         int tok_prec = get_token_precedence(a.get_last_token()[0]);
 
+        if (a.get_last_token_type() == a.tt_variable || (a.get_last_token()[0] == '|' && !absbrace)) {
+            tok_prec = get_token_precedence('*');
+        }
+
         if (tok_prec < expr_prec) {
             return lhs;
         }
 
         int bin_op = a.get_last_token()[0];
-        a.next_token(); // eat binop
+
+        if (a.get_last_token_type() == a.tt_variable || (a.get_last_token()[0] == '|' && !absbrace)) {
+            bin_op = '*';
+        } else {
+            a.next_token(); // eat binop
+        }
 
         ast_node *rhs =  parse_primary(a);
         int next_prec = get_token_precedence(a.get_last_token()[0]);
+        if (a.get_last_token_type() == a.tt_variable) {
+            next_prec = '*';
+        }
         if (tok_prec < next_prec) {
+            bool oldbrace = absbrace;
+            absbrace = absbrace || a.get_last_token()[0] == '|';
             rhs = parse_bin_op_rhs(a, tok_prec + 1, rhs);
+            absbrace = oldbrace;
         }
 
 
@@ -177,6 +197,7 @@ static ast_node *parse_bin_op_rhs(token_reader &a, int expr_prec, ast_node *lhs)
         static_cast<binary_operator*>(lhs)->left = old_lhs;
         static_cast<binary_operator*>(lhs)->right = rhs;
     }
+    return lhs;
 }
 
 static ast_node *parse_expression(token_reader &a) {

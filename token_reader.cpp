@@ -65,3 +65,7 @@ void token_reader::next_token() {
     m_last_token.push_back(m_stream.last_char());
     m_stream.next_char();
 }
+
+bool token_reader::is_eof() {
+    return m_stream.is_eof();
+}

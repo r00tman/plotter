@@ -13,6 +13,8 @@ Widget::Widget(QWidget *parent)
     r.next_token();
     install_precedence();
     m_ast = parse_expression(r);
+    m_ast = optimize(m_ast);
+    //eps = QInputDialog::getDouble(this, "Epsilon", "Input epsilon (try values from 0.0001 for simple formulaes to 1000000 for very complex expressions:", 0, -2147483647, 214783647, 10);
 }
 
 Widget::~Widget()
@@ -21,11 +23,10 @@ Widget::~Widget()
 }
 
 const long long multisampling = 4;
-const long double eps = 1e-5;
-const long double xscale = 25;
-const long double yscale = 25;
-const long double xpitch = -15;
-const long double ypitch = -10;
+const long double xscale = 15;
+const long double yscale = 15;
+const long double xpitch = -25;
+const long double ypitch = -15;
 
 long double Widget::f(long double x, long double y) {
     //long double f1 = sqrt(pow(x-5, 2)+pow(y-8, 2))+sqrt(pow(x-3, 2)+pow(y, 2))-sqrt(68);
@@ -41,7 +42,7 @@ bool Widget::condition(long double x, long double y) {
 }
 
 
-void Widget::paintEvent(QPaintEvent *e)
+void Widget::paintEvent(QPaintEvent */*e*/)
 {
     QPixmap a(multisampling*this->width(), multisampling*this->height());
     a.fill();
@@ -49,7 +50,7 @@ void Widget::paintEvent(QPaintEvent *e)
     b.begin(&a);
     for (int y = 0; y < a.height(); y++) {
         for (int x = 0; x < a.width(); x++) {
-            if (condition(x/xscale/multisampling+xpitch, y/yscale/multisampling+ypitch))
+            if (condition((x/xscale+xpitch)/multisampling, (y/yscale+ypitch)/multisampling))
                 b.drawPoint(x, a.height()-y-1);
         }
     }
