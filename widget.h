@@ -1,29 +1,28 @@
 #ifndef WIDGET_H
 #define WIDGET_H
 
-#include <QtGui>
-#include <QtWidgets>
-#include <string>
-#include "aggregate_node.h"
-#include "ast.h"
-#include "token_reader.h"
-#include "text_stream.h"
+#include <QWidget>
+#include <QProgressBar>
 
-class Widget : public QWidget
-{
+#include "render_thread.h"
+#include "render_widget.h"
+
+class main_widget : public QWidget {
     Q_OBJECT
 
 private:
-    std::string m_expression;
-    ast_node *m_ast;
-    long double f(long double x, long double y);
-    bool condition(long double x, long double y);
+    render_widget *m_rw;
+    QProgressBar *m_pb;
 
 public:
-    Widget(QWidget *parent = 0);
-    ~Widget();
+    main_widget(QWidget *parent = 0);
+    ~main_widget();
 
-    void paintEvent(QPaintEvent *e);
+    void resizeEvent(QResizeEvent *);
+    void keyPressEvent(QKeyEvent *e);
+
+public slots:
+    void show_progress(double p);
 };
 
 #endif // WIDGET_H

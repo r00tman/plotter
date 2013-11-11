@@ -12,13 +12,16 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         widget.cpp \
-    ast.cpp \
-    text_stream.cpp \
-    token_reader.cpp \
-    aggregate_node.cpp
+    coordinate_system.cpp \
+    f.cpp \
+    render_thread.cpp \
+    render_widget.cpp
 
 HEADERS  += widget.h \
-    ast.h \
-    text_stream.h \
-    token_reader.h \
-    aggregate_node.h
+    f.h \
+    coordinate_system.h \
+    render_thread.h \
+    render_widget.h
+
+QMAKE_CXXFLAGS +=-fopenmp
+QMAKE_LFLAGS += -fopenmp
